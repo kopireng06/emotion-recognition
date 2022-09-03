@@ -1,0 +1,27 @@
+<html>
+
+<head>
+	<title>Parcel Sandbox</title>
+	<meta charset="UTF-8" />
+
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+	<script>
+    	document.addEventListener("DOMContentLoaded", function(event) { 
+      		const image = document.getElementById('image');
+          	async function predictEmotion(){
+            		const model = await tf.loadLayersModel('./model.json');
+            		const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([48, 48]).toFloat().mean(2).expandDims(2).reshape([1,48,48,1])
+            		console.log(tensor)
+                  const prediction = await model.predict(tensor).data()
+                  console.log(prediction)
+          	}
+          	predictEmotion()
+        });
+
+	</script>
+</head>
+
+<body>
+<img id="image" src="./angry.jpeg" alt="">
+</body>
+</html>

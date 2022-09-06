@@ -3,25 +3,55 @@
 <head>
 	<title>Parcel Sandbox</title>
 	<meta charset="UTF-8" />
+	<style>
+		.center {
+			margin: 0 auto;
+			display: block;
+		}
 
+		.text-center {
+			text-align: center;
+		}
+
+		#video {
+			border-radius: 20px;
+		}
+	</style>
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
 	<script>
-    	document.addEventListener("DOMContentLoaded", function(event) { 
-      		const image = document.getElementById('image');
-          	async function predictEmotion(){
-            		const model = await tf.loadLayersModel('./model.json');
-            		const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([48, 48]).toFloat().mean(2).expandDims(2).reshape([1,48,48,1])
-            		console.log(tensor)
-                  const prediction = await model.predict(tensor).data()
-                  console.log(prediction)
-          	}
-          	predictEmotion()
-        });
+		document.addEventListener("DOMContentLoaded", async function (event) {
+			const video = document.querySelector("#video");
+			const buttonPredict = document.querySelector('#predict');
+			const outputPredict = document.querySelector('#output');
+			const camera = await tf.data.webcam(video, {
+				resizeWidth: 48,
+				resizeHeight: 48,
+			});
 
+			async function predictEmotion(image) {
+				const model = await tf.loadLayersModel('./model.json');
+				const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([48, 48]).toFloat().mean(2).expandDims(2).reshape([1, 48, 48, 1]);
+				const prediction = await model.predict(tensor).data();
+				const listPredictOutput = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+				console.log(prediction)
+				const max = Math.max(...prediction);
+				const indexPredictOutput = prediction.indexOf(max);
+				outputPredict.innerHTML = listPredictOutput[indexPredictOutput];
+			}
+
+			// predictEmotion(document.querySelector('img'));
+
+			setInterval(() => {
+				predictEmotion(video);
+			}, 500)
+		});
 	</script>
 </head>
 
 <body>
-<img id="image" src="./angry.jpeg" alt="">
+	<video class="center" id="video" autoplay></video>
+	<!-- <img class="center" width="800" height="500" id="img" src="./happy.jpg" alt=""> -->
+	<p class="center text-center" id="output"></p>
 </body>
+
 </html>

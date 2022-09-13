@@ -3,6 +3,7 @@ import numpy as np
 import itertools
 from sklearn.metrics import classification_report, confusion_matrix
 from tensorflow.keras import backend
+import tensorflow as tf
 
 def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=False):
     if cmap is None:
@@ -42,16 +43,19 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None,
     plt.show()
 
 
-def evaluate_model(model, dataset):
-    y_pred = model.predict(dataset)
-    y_pred = np.argmax(y_pred, axis=1)
-    class_labels = dataset.class_indices
-    class_labels = {v:k for k,v in class_labels.items()}
+def evaluate_model(model, dataset, class_labels):
+    y_true = []
+    y_pred = []
+    for x,y in dataset:
+      y_true.append(y)
+      y_pred.append(tf.argmax(model.predict(x),axis = 1))
+      
+    y_pred = tf.concat(y_pred, axis=0)
+    y_true = tf.concat(y_true, axis=0)
 
-    cm_train = confusion_matrix(dataset.classes, y_pred)
-    target_names = list(class_labels.values())
-    print(classification_report(dataset.classes, y_pred, target_names=target_names))
-    plot_confusion_matrix(cm_train, target_names)
+    cm_train = confusion_matrix(y_true, y_pred)
+    print(classification_report(y_true, y_pred, target_names=class_labels))
+    plot_confusion_matrix(cm_train, class_labels)
 
 
 def specificity(y_true, y_pred):    

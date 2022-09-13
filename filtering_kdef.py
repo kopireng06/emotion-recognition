@@ -16,6 +16,7 @@ expression_codes = {
 
 def copy_image(src_path, expression_code, destination_path="/"):
     abs_path = os.path.abspath("")
+    print(abs_path)
     if(expression_code in expression_codes):
         try:
             os.makedirs(abs_path+'/'+destination_path+'/' +
@@ -34,7 +35,8 @@ def get_expression_code(file_name):
     return expression_code
 
 
-for dirpath, dirnames, files in os.walk('./KDEF_and_AKDEF/KDEF_and_AKDEF/KDEF'):
+for dirpath, dirnames, files in os.walk('./KDEF_and_AKDEF/KDEF'):
     for file_name in files:
+        print('sss')
         expression_code = get_expression_code(file_name)
         copy_image(dirpath+'/'+file_name, expression_code, "KDEF")

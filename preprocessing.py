@@ -8,7 +8,7 @@ generatorImage = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
                                                             horizontal_flip=True)
 
 imageSource = keras.preprocessing.image_dataset_from_directory(
-    './coba', color_mode='rgb', batch_size=436, image_size=(48, 48))
+    './coba', color_mode='rgb', batch_size=140, image_size=(224, 224))
 
 totalGeneratePerImage = 1 # determine how many generated per image
 length_dataset = list(imageSource.unbatch().as_numpy_iterator())

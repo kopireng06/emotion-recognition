@@ -19,18 +19,19 @@
 	</style>
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
 	<script>
+    	let predict = null
 		document.addEventListener("DOMContentLoaded", async function (event) {
 			const video = document.querySelector("#video");
 			const buttonPredict = document.querySelector('#predict');
 			const outputPredict = document.querySelector('#output');
 			const camera = await tf.data.webcam(video, {
-				resizeWidth: 48,
-				resizeHeight: 48,
+				resizeWidth: 224,
+				resizeHeight: 224,
 			});
 
 			async function predictEmotion(image) {
 				const model = await tf.loadLayersModel('./model.json');
-				const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([48, 48]).toFloat().mean(2).expandDims(2).reshape([1, 48, 48, 1]);
+				const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([224, 224]).toFloat().mean(2).expandDims(2).reshape([1, 224, 224, 1]);
 				const prediction = await model.predict(tensor).data();
 				const listPredictOutput = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
 				console.log(prediction)
@@ -41,9 +42,11 @@
 
 			// predictEmotion(document.querySelector('img'));
 
-			setInterval(() => {
-				predictEmotion(video);
-			}, 500)
+			//setInterval(() => {
+			//	predictEmotion(video);
+			//}, 500)
+			
+			predict = ()=>predictEmotion(video)
 		});
 	</script>
 </head>
@@ -51,6 +54,7 @@
 <body>
 	<video class="center" id="video" autoplay></video>
 	<!-- <img class="center" width="800" height="500" id="img" src="./happy.jpg" alt=""> -->
+	<button onclick="predict()">PREDICT</button>
 	<p class="center text-center" id="output"></p>
 </body>
 

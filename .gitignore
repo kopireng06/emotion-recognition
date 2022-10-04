@@ -3,6 +3,14 @@
 /KDEF_and_AKDEF/*
 /KDEF/*
 /FER2013_ORIGINAL/*
+/KDEF_ORIGINAL/*
+/KDEF_CROPPED_train/*
+/KDEF_CROPPED_test/*
+/disgust_for_augmentation/*
+/disgust_original_test/*
+/disgust_original_train/*
+/KDEF_test/*
+/KDEF_train/*
 KDEF_and_AKDEF.zip
 FER_2013.zip
 /__pycache__/*

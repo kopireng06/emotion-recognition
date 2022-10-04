@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['filtering_kdef.py', '.gitignore', 'evaluation.py', 'cnn.py', 'preprocessing.py', 'index.html']
+recent_files = ['.gitignore', 'evaluation.py', 'cnn.py', 'preprocessing.py', 'filtering_kdef.py', 'crop_face.py']
 
 [main]
 version = 0.2.0

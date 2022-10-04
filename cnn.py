@@ -1,19 +1,27 @@
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import datasets, layers, models, backend
+from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing import image
-from evaluation import evaluate_model, specificity
-import matplotlib.pyplot as plt
-import numpy as np
+from evaluation import evaluate_model
 import tensorflowjs as tfjs
+
+ACCURACY_THRESHOLD = 0.9
+
+class myCallback(tf.keras.callbacks.Callback): 
+    def on_epoch_end(self, epoch, logs={}): 
+        if(logs.get('accuracy') > ACCURACY_THRESHOLD):   
+            print("\nReached %2.2f%% accuracy, so stopping training!!" %(ACCURACY_THRESHOLD*100))   
+            self.model.stop_training = True
+            
+callbacks = myCallback()
 
 datagen_train = image.ImageDataGenerator(rescale=1./255)
 datagen_test = image.ImageDataGenerator(rescale=1./255)
 
+
 class_labels = ['angry', 'disgusted',' fear', 'happy', 'neutral', 'sad', 'surprised']
 
 train_set = tf.keras.utils.image_dataset_from_directory(
-  './FER2013_ORIGINAL/train',
+  './FER2013/train',
   label_mode='categorical',
   image_size=(48, 48),
   batch_size=64,
@@ -21,7 +29,7 @@ train_set = tf.keras.utils.image_dataset_from_directory(
 )
 
 test_set = tf.keras.utils.image_dataset_from_directory(
-  './FER2013_ORIGINAL/test',
+  './FER2013/test',
   label_mode='categorical',
   image_size=(48, 48),
   batch_size=64,
@@ -52,9 +60,9 @@ optimizer = tf.keras.optimizers.SGD(learning_rate=0.001)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 model.summary()
-epochs = 60
+epochs = 200
 
-model.fit(train_set, validation_data=test_set, epochs=epochs)
+model.fit(train_set, validation_data=test_set, epochs=epochs, callbacks=[callbacks])
 
 tfjs.converters.save_keras_model(model, './')
 
@@ -67,7 +75,7 @@ tfjs.converters.save_keras_model(model, './')
 # print("Saved model to disk")
 
 test = tf.keras.utils.image_dataset_from_directory(
-  './FER2013_ORIGINAL/test',
+  './FER2013/test',
   image_size=(48, 48),
   batch_size=64,
   color_mode="grayscale"
